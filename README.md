@@ -20,7 +20,7 @@ This is semantic - you should call ->validate() where it makes sense in your cod
 ```
 <?PHP namespace application\libraries\documents;
 
-class customer extends \treehousetim\document
+class customer extends \treehousetim\document\document
 {
 	public $first_name;
 	public $last_name;
