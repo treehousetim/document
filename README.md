@@ -64,4 +64,4 @@ If you have cloned this repo, you can run the tests.
 Run composer install to install PHPUnit and Monolog.
 
 1. `composer install`
-2. `./vendor/bin/phpunit test`
+2. `./vendor/bin/phpunit`
