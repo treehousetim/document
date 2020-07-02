@@ -27,7 +27,7 @@ abstract class document implements \jsonSerializable
 	{
 		if( count( $arguments ) != 1 )
 		{
-			throw new Exception( 'When setting values on ' . get_class( $this ) . ' ('. $name . ') You must pass exactly one value', Exception::callOneVar );
+			throw new Exception( 'When setting values on ' . get_class( $this ) . ' ('. $name . ') You must pass exactly one value' . print_r( $arguments, true ), Exception::callOneVar );
 		}
 
 		if( ! property_exists( get_class( $this ), $name ) )
@@ -40,7 +40,7 @@ abstract class document implements \jsonSerializable
 		return $this;
 	}
 	//------------------------------------------------------------------------
-	protected function optionalFieldOut( $fieldName, &$out )
+	protected function optionalFieldOut( $fieldName, array &$out )
 	{
 		if( $this->$fieldName )
 		{

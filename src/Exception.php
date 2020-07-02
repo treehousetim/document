@@ -1,4 +1,4 @@
-<?php namespace application\libraries\documents;
+<?php namespace treehousetim\document;
 
 class Exception extends \LogicException
 {
