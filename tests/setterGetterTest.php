@@ -1,29 +1,9 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types=1); namespace treehousetim\document\test;
 
 use treehousetim\document\document;
 use treehousetim\document\Exception as documentException;
 
 use PHPUnit\Framework\TestCase;
-
-class smallTestDocument extends document
-{
-	public $publicValue;
-	protected $protectedValue;
-
-	public function jsonSerialize()
-	{
-		$out = [];
-		$out['publicValue'] = $this->publicValue;
-		$out['protectedValue'] = $this->protectedValue;
-
-		return $out;
-	}
-	//------------------------------------------------------------------------
-	public function validate()
-	{
-
-	}
-}
 
 final class setterGetterTest extends TestCase
 {

@@ -5,10 +5,18 @@ use treehousetim\document\Exception;
 
 class nameDocument extends document
 {
-	public $full_name;
-	public $first_name;
-	public $last_name;
-	public $suffix;
+	protected $full_name;
+	protected $first_name;
+	protected $last_name;
+	protected $suffix;
+
+	const sufPHD = 'PHD';
+	const sufMD = 'MD';
+
+	protected $allowedSuffixes = [
+		self::sufPHD,
+		self::sufMD
+	];
 
 	public function jsonSerialize ()
 	{
@@ -22,6 +30,14 @@ class nameDocument extends document
 		$this->optionalFieldOut( 'suffix', $out );
 
 		return $out;
+	}
+	//------------------------------------------------------------------------
+	public function suffix( $value ) : self
+	{
+		$this->validateValueInList( 'suffix', $value, $this->allowedSuffixes );
+		$this->suffix = $value;
+
+		return $this;
 	}
 	//------------------------------------------------------------------------
 	protected function validate()

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types=1); namespace treehousetim\document\test;
 
 use treehousetim\document\document;
 use treehousetim\document\Exception as documentException;
@@ -51,6 +51,22 @@ final class validationTest extends TestCase
 
 		// required to trigger validation
 		$doc->jsonSerialize();
+	}
+	//------------------------------------------------------------------------
+	public function testValidateValueInList()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::disallowedValue );
+
+		$doc = getNameDocument();
+		$doc->suffix( 'bad value' );
+	}
+	//------------------------------------------------------------------------
+	public function testValidateValueInListSuccess()
+	{
+		$doc = getNameDocument();
+		$doc->suffix( nameDocument::sufMD );
+		$this->assertEquals( $doc->suffix, nameDocument::sufMD );
 	}
 
 
