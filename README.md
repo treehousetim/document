@@ -22,13 +22,13 @@ This is semantic - you should call ->validate() where it makes sense in your cod
 
 class customer extends \treehousetim\document\document
 {
-	public $first_name;
-	public $last_name;
-	public $address_line_1;
-	public $city;
-	public $state_province;
-	public $postal_code;
-	public $email;
+	protected $first_name;
+	protected $last_name;
+	protected $address_line_1;
+	protected $city;
+	protected $state_province;
+	protected $postal_code;
+	protected $email;
 
 	public function jsonSerialize ()
 	{
