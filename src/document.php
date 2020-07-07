@@ -5,6 +5,16 @@ abstract class document implements \jsonSerializable
 	abstract public function jsonSerialize ();
 	abstract protected function validate();
 	//------------------------------------------------------------------------
+	public function dataArray() : array
+	{
+		return (array) $this->jsonSerialize();
+	}
+	//------------------------------------------------------------------------
+	public function dataObject() : \stdClass
+	{
+		return (object) $this->jsonSerialize();
+	}
+	//------------------------------------------------------------------------
 	protected function validateRequired( string $name )
 	{
 		if( ! $this->{$name} )
@@ -20,6 +30,16 @@ abstract class document implements \jsonSerializable
 		if( ! $this->{$name} instanceOf document )
 		{
 			throw new Exception( $name . ' is not a sub document', Exception::wrongType );
+		}
+
+		$this->{$name}->validate();
+	}
+	//------------------------------------------------------------------------
+	protected function validateValueInList( string $name, string $value, array $list )
+	{
+		if( ! in_array( $value, $list ) )
+		{
+			throw new Exception( 'Disallowed Value (' . print_r( $value, true ) . ') for ' . $name . ' on ' . get_class( $this ), Exception::disallowedValue );
 		}
 	}
 	//------------------------------------------------------------------------
