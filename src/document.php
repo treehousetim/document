@@ -40,6 +40,16 @@ abstract class document implements \jsonSerializable
 		return $this;
 	}
 	//------------------------------------------------------------------------
+	public function __get( $name )
+	{
+		if( ! property_exists( get_class( $this ), $name ) )
+		{
+			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
+		}
+
+		return $this->{$name};
+	}
+	//------------------------------------------------------------------------
 	protected function optionalFieldOut( $fieldName, array &$out )
 	{
 		if( $this->$fieldName )
