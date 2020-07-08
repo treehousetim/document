@@ -97,4 +97,20 @@ abstract class document implements \jsonSerializable
 
 		return $out;
 	}
+	//------------------------------------------------------------------------
+	public function setFromObject( $object ) : self
+	{
+		if( ! is_object( $object ) )
+		{
+			throw new Exception( 'You must pass an object', Exception::wrongType );
+		}
+
+		$props = get_object_vars( $this );
+		foreach( $props as $prop )
+		{
+			$this->{$prop} = $object->{$prop};
+		}
+
+		return $this;
+	}
 }
