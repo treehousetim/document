@@ -15,11 +15,14 @@ abstract class document implements \jsonSerializable
 		return (object) $this->jsonSerialize();
 	}
 	//------------------------------------------------------------------------
-	protected function validateRequired( string $name )
+	protected function validateRequired( string ...$names )
 	{
-		if( ! $this->{$name} )
+		foreach( $names as $name )
 		{
-			throw new Exception( $name . ' missing', Exception::missingData );
+			if( ! $this->{$name} )
+			{
+				throw new Exception( $name . ' missing', Exception::missingData );
+			}
 		}
 	}
 	//------------------------------------------------------------------------
@@ -76,5 +79,38 @@ abstract class document implements \jsonSerializable
 		{
 			$out[$fieldName] = $this->{$fieldName};
 		}
+	}
+	//------------------------------------------------------------------------
+	protected function getFieldArray( string ...$fields ) : array
+	{
+		$out = array();
+
+		foreach( $fields as $name )
+		{
+			if( ! property_exists( get_class( $this ), $name ) )
+			{
+				throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
+			}
+
+			$out[$name] = $this->{$name};
+		}
+
+		return $out;
+	}
+	//------------------------------------------------------------------------
+	public function setFromObject( $object ) : self
+	{
+		if( ! is_object( $object ) )
+		{
+			throw new Exception( 'You must pass an object', Exception::wrongType );
+		}
+
+		$props = get_object_vars( $this );
+		foreach( $props as $prop )
+		{
+			$this->{$prop} = $object->{$prop};
+		}
+
+		return $this;
 	}
 }
