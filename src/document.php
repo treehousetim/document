@@ -5,6 +5,11 @@ abstract class document implements \jsonSerializable
 	abstract public function jsonSerialize ();
 	abstract protected function validate();
 	//------------------------------------------------------------------------
+	public function doValidateException()
+	{
+		$this->validate();
+	}
+	//------------------------------------------------------------------------
 	public function dataArray() : array
 	{
 		return (array) $this->jsonSerialize();
@@ -21,7 +26,7 @@ abstract class document implements \jsonSerializable
 		{
 			if( ! $this->{$name} )
 			{
-				throw new Exception( $name . ' missing', Exception::missingData );
+				throw new Exception( $name . ':: missing', Exception::missingData );
 			}
 		}
 	}
@@ -32,7 +37,7 @@ abstract class document implements \jsonSerializable
 
 		if( ! $this->{$name} instanceOf document )
 		{
-			throw new Exception( $name . ' is not a sub document', Exception::wrongType );
+			throw new Exception( $name . ':: is not a sub document', Exception::wrongType );
 		}
 
 		$this->{$name}->validate();
@@ -42,7 +47,7 @@ abstract class document implements \jsonSerializable
 	{
 		if( ! in_array( $value, $list ) )
 		{
-			throw new Exception( 'Disallowed Value (' . print_r( $value, true ) . ') for ' . $name . ' on ' . get_class( $this ), Exception::disallowedValue );
+			throw new Exception( $name . ':: Disallowed Value (' . print_r( $value, true ) . ') for ' . $name . ' on ' . get_class( $this ), Exception::disallowedValue );
 		}
 	}
 	//------------------------------------------------------------------------
@@ -92,7 +97,14 @@ abstract class document implements \jsonSerializable
 				throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
 			}
 
-			$out[$name] = $this->{$name};
+			if( $this->{$name} instanceOf document )
+			{
+				$out[$name] = $this->{$name}->jsonSerialize();
+			}
+			else
+			{
+				$out[$name] = $this->{$name};
+			}
 		}
 
 		return $out;
