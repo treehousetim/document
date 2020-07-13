@@ -1,3 +1,5 @@
+![Unit Tests](https://github.com/treehousetim/document/workflows/Unit%20Tests/badge.svg)
+
 # document
 A generic document class used to create structured data objects
 
