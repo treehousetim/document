@@ -26,5 +26,8 @@
         "psr-4": {
             "treehousetim\\document\\test\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": ["phpunit"]
     }
 }
