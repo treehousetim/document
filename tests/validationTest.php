@@ -32,7 +32,7 @@ final class validationTest extends TestCase
 	{
 		$this->expectException( documentException::class );
 		$this->expectExceptionCode( documentException::wrongType );
-		$this->expectExceptionMessage( 'name is not a sub document' );
+		$this->expectExceptionMessage( 'name:: is not a sub document' );
 
 		$doc = getTestDocument();
 		$doc->name = 'string value instead of document object';
@@ -51,6 +51,18 @@ final class validationTest extends TestCase
 
 		// required to trigger validation
 		$doc->jsonSerialize();
+	}
+	//------------------------------------------------------------------------
+	public function testDoValidate()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::callOneVar );
+
+		$doc = getTestDocument();
+		$doc->city( 'Springfield', 'IL' );
+
+		// should call validate and trigger the exception above
+		$doc->doValidate();
 	}
 	//------------------------------------------------------------------------
 	public function testValidateValueInList()

@@ -1,7 +1,6 @@
 # document
 A generic document class used to create structured data objects
 
-
 ## Installing
 
 `composer require treehousetim/document`
@@ -30,6 +29,9 @@ This will return the result of `->jsonSerialize()` cast as an object.  This will
 
 ## Validating
 You can use built in methods in the document class to validate.  Validation is done via exceptions - you should validate your data before creating documents if you want to return end-user validation messages.
+
+### ->doValidate()
+A public interface to the protected validate method.  Public/Protected are separated for possible future features.
 
 ### Exception Codes
 Exceptions are thrown using codes according to the following list
@@ -62,7 +64,6 @@ You can validate a value to be in a list using this method.
 The code thrown is `Exception::disallowedValue`
 
 The suggestion is made to implement a setter function for any values you want to set using this validation function.  Before you set the value on the document class you would call this validation function.  This will protect your document object from ever having wrong values set on it.
-
 
 ## Example
 ```

@@ -5,7 +5,7 @@ abstract class document implements \jsonSerializable
 	abstract public function jsonSerialize ();
 	abstract protected function validate();
 	//------------------------------------------------------------------------
-	public function doValidateException()
+	public function doValidate()
 	{
 		$this->validate();
 	}
