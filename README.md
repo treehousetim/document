@@ -68,7 +68,7 @@ The code thrown is `Exception::disallowedValue`
 The suggestion is made to implement a setter function for any values you want to set using this validation function.  Before you set the value on the document class you would call this validation function.  This will protect your document object from ever having wrong values set on it.
 
 ### ->validateNotNull( string ...$names )
-Validates that a property exists and is not equal to null. `=== null`
+Validates that a property exists and is not equal to null. `!== null`
 
 The code thrown is `Exception::noSuchProperty` if property does not exist on class.
 
