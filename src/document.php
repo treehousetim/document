@@ -31,6 +31,17 @@ abstract class document implements \jsonSerializable
 		}
 	}
 	//------------------------------------------------------------------------
+	protected function validateNotNull( string ...$names )
+	{
+		foreach( $names as $name )
+		{
+			if( $this->{$name} === null )
+			{
+				throw new Exception( $name . ':: missing', Exception::missingData );
+			}
+		}
+	}
+	//------------------------------------------------------------------------
 	protected function validateSubDocument( string $name )
 	{
 		$this->validateRequired( $name );

@@ -46,4 +46,14 @@ class nameDocument extends document
 		$this->validateRequired( 'last_name' );
 		$this->validateRequired( 'full_name' );
 	}
+	//------------------------------------------------------------------------
+	public function doValidateNotNull()
+	{
+		$this->validateNotNull( 'first_name', 'last_name' );
+	}
+	//------------------------------------------------------------------------
+	public function doValidateNotNullNonField()
+	{
+		$this->validateNotNull( 'fizbuz' );
+	}
 }

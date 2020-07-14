@@ -80,6 +80,34 @@ final class validationTest extends TestCase
 		$doc->suffix( nameDocument::sufMD );
 		$this->assertEquals( $doc->suffix, nameDocument::sufMD );
 	}
+	//------------------------------------------------------------------------
+	public function testNotNull()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::missingData );
 
+		$doc = new \treehousetim\document\test\nameDocument();
+		$doc->doValidateNotNull();
+	}
+	//------------------------------------------------------------------------
+	public function testNotNullEquals()
+	{
+		$doc = new \treehousetim\document\test\nameDocument();
+		$doc
+			->first_name( '' )
+			->last_name( '' );
+		$doc->doValidateNotNull();
 
+		$this->assertEquals( $doc->first_name, '' );
+		$this->assertEquals( $doc->last_name, '' );
+	}
+	//------------------------------------------------------------------------
+	public function testNotNullNonField()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::noSuchProperty );
+
+		$doc = new \treehousetim\document\test\nameDocument();
+		$doc->doValidateNotNullNonField();
+	}
 }
