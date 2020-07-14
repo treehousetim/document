@@ -8,4 +8,5 @@ class Exception extends \LogicException
 	const callOneVar = 3;
 	const noSuchProperty = 4;
 	const disallowedValue = 5;
+	const noValue = 6;
 }

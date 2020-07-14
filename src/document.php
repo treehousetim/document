@@ -2,6 +2,8 @@
 
 abstract class document implements \jsonSerializable
 {
+	private $_doc_set_values = [];
+
 	abstract public function jsonSerialize ();
 	abstract protected function validate();
 	//------------------------------------------------------------------------
@@ -24,9 +26,27 @@ abstract class document implements \jsonSerializable
 	{
 		foreach( $names as $name )
 		{
-			if( ! $this->{$name} )
+			if( ! array_key_exists( $name, $this->_doc_set_values ) || $this->_doc_set_values[$name] === false )
 			{
-				throw new Exception( $name . ':: missing', Exception::missingData );
+				if( ! property_exists( get_class( $this ), $name ) )
+				{
+					throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
+				}
+
+				throw new Exception( $name . ':: has not been set', Exception::missingData );
+			}
+		}
+	}
+	//------------------------------------------------------------------------
+	protected function validateHasValue( string ...$names )
+	{
+		foreach( $names as $name )
+		{
+			$this->validateNotNull( $name );
+
+			if( $this->{$name} == '' )
+			{
+				throw new Exception( $name . ':: is empty', Exception::noValue );
 			}
 		}
 	}
@@ -35,23 +55,28 @@ abstract class document implements \jsonSerializable
 	{
 		foreach( $names as $name )
 		{
+			$this->validateRequired( $name );
+
 			if( $this->{$name} === null )
 			{
-				throw new Exception( $name . ':: missing', Exception::missingData );
+				throw new Exception( $name . ':: is null', Exception::missingData );
 			}
 		}
 	}
 	//------------------------------------------------------------------------
-	protected function validateSubDocument( string $name )
+	protected function validateSubDocument( string ...$names )
 	{
-		$this->validateRequired( $name );
-
-		if( ! $this->{$name} instanceOf document )
+		foreach( $names as $name )
 		{
-			throw new Exception( $name . ':: is not a sub document', Exception::wrongType );
-		}
+			$this->validateRequired( $name );
 
-		$this->{$name}->validate();
+			if( ! $this->{$name} instanceOf document )
+			{
+				throw new Exception( $name . ':: is not a sub document', Exception::wrongType );
+			}
+
+			$this->{$name}->validate();
+		}
 	}
 	//------------------------------------------------------------------------
 	protected function validateValueInList( string $name, string $value, array $list )
@@ -74,8 +99,15 @@ abstract class document implements \jsonSerializable
 			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
 		}
 
+		$this->_doc_set_values[$name] = true;
 		$this->{$name} = $arguments[0];
 
+		return $this;
+	}
+	//------------------------------------------------------------------------
+	protected function markValueSet( $name ) : self
+	{
+		$this->_doc_set_values[$name] = true;
 		return $this;
 	}
 	//------------------------------------------------------------------------
@@ -87,6 +119,17 @@ abstract class document implements \jsonSerializable
 		}
 
 		return $this->{$name};
+	}
+	//------------------------------------------------------------------------
+	public function __unset( $name )
+	{
+		if( ! property_exists( get_class( $this ), $name ) )
+		{
+			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
+		}
+
+		$this->_doc_set_values[$name] = false;
+		$this->{$name} = null;
 	}
 	//------------------------------------------------------------------------
 	protected function optionalFieldOut( $fieldName, array &$out )

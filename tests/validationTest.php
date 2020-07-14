@@ -12,11 +12,11 @@ final class validationTest extends TestCase
 		$this->expectException( documentException::class );
 		$this->expectExceptionCode( documentException::missingData );
 
-		$doc = getTestDocument();
-		$doc->address_line_1( '' );
+		//$doc = getTestDocument();
+		$doc = new  \treehousetim\document\test\testDocument();
+		//unset( $doc->address_line_1 );
 
-		// required to trigger validation
-		$doc->jsonSerialize();
+		$doc->doValidate();
 	}
 	//------------------------------------------------------------------------
 	public function testSettingNonExistantProperty()
@@ -35,7 +35,8 @@ final class validationTest extends TestCase
 		$this->expectExceptionMessage( 'name:: is not a sub document' );
 
 		$doc = getTestDocument();
-		$doc->name = 'string value instead of document object';
+		// poor code in test document to test validation
+		$doc->setNameString( 'string value instead of document object' );
 
 		// required to trigger validation
 		$doc->jsonSerialize();
@@ -109,5 +110,26 @@ final class validationTest extends TestCase
 
 		$doc = new \treehousetim\document\test\nameDocument();
 		$doc->doValidateNotNullNonField();
+	}
+	//------------------------------------------------------------------------
+	public function testHasValue()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::noValue );
+
+		$doc = getTestDocument();
+		$doc->postal_code( '' );
+		$doc->validateValidateHasValue();
+	}
+	//------------------------------------------------------------------------
+	public function testUnset()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::missingData );
+
+		$doc = getTestDocument();
+		unset( $doc->address_line_1 );
+
+		$doc->doValidate();
 	}
 }

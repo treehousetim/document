@@ -5,12 +5,12 @@ use treehousetim\document\Exception;
 
 class testDocument extends document
 {
-	public $name;
-	public $address_line_1;
-	public $city;
-	public $state_province;
-	public $postal_code;
-	public $email;
+	protected $name;
+	protected $address_line_1;
+	protected $city;
+	protected $state_province;
+	protected $postal_code;
+	protected $email;
 
 	public function jsonSerialize ()
 	{
@@ -30,6 +30,14 @@ class testDocument extends document
 	public function name( nameDocument $nameDoc ) : self
 	{
 		$this->name = $nameDoc;
+		$this->markValueSet( 'name' );
+		return $this;
+	}
+	//------------------------------------------------------------------------
+	public function setNameString( $name ) : self
+	{
+		$this->name = $name;
+		$this->markValueSet( 'name' );
 		return $this;
 	}
 	//------------------------------------------------------------------------
@@ -39,5 +47,10 @@ class testDocument extends document
 		$this->validateRequired( 'postal_code' );
 		$this->validateRequired( 'address_line_1' );
 		$this->validateSubDocument( 'name' );
+	}
+	//------------------------------------------------------------------------
+	public function validateValidateHasValue()
+	{
+		$this->validateHasValue( 'postal_code' );
 	}
 }

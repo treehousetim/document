@@ -17,6 +17,51 @@ Return a structure that makes sense for your document.  This method is called au
 `abstract protected function validate();`
 This is semantic - you should call ->validate() where it makes sense in your code.  You can see one approach in the example below.
 
+## Setting sub documents
+Always write a setter method (if using PHP 7.4 or later, you can specify type on the class declaration).
+
+```php
+class myName extends \treehousetim\document\document
+{
+	protected $first;
+	protected $last;
+	protected $full;
+}
+
+class myDoc extends \treehousetim\document\document
+{
+	protected $name;
+
+	public function jsonSerialize()
+	{
+		return $this->getFieldArray(
+			'name'
+		);
+	}
+	//------------------------------------------------------------------------
+	public function validate()
+	{
+		$this->validateSubDocument( 'name' );
+	}
+	//------------------------------------------------------------------------
+	public function name( myName $name ) : self
+	{
+		$this->name = $name;
+		$this->markValueSet( 'name' );
+		return $this;
+	}
+}
+
+```
+
+## Setting other values with validation
+You can validate values coming into your document to conform to a list of allowed values.
+
+
+## Customer property Setters
+If you write a custom property setter as described above, you must make sure you call `->markValueSet( $name )` to ensure validation works.
+See the example above.
+
 ## Getting Data Out
 You can json_encode a document sub class and it will return what you return from `jsonSerialize()` serialized into a JSON string.
 
@@ -106,7 +151,7 @@ class customer extends \treehousetim\document\document
 	//------------------------------------------------------------------------
 	protected function validate()
 	{
-		$this->validateRequired(
+		$this->validateHasValue(
 			'first_name',
 			'last_name',
 			'city',
@@ -115,7 +160,7 @@ class customer extends \treehousetim\document\document
 			'address_line_1'
 		);
 
-		$this->validateNotNull( 'address_line_2' );
+		$this->validateRequired( 'address_line_2' );
 	}
 }
 ```
