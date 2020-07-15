@@ -200,7 +200,7 @@ class personName extends \treehousetim\document\document
 		);
 	}
 	//------------------------------------------------------------------------
-	public function validate()
+	protected function validate()
 	{
 		// all are required to be set with some data
 		$this->validateHasValue(
