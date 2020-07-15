@@ -38,8 +38,7 @@ final class validationTest extends TestCase
 		// poor code in test document to test validation
 		$doc->setNameString( 'string value instead of document object' );
 
-		// required to trigger validation
-		$doc->jsonSerialize();
+		$doc->dovalidate();
 	}
 	//------------------------------------------------------------------------
 	public function testCallOneVar()
@@ -50,8 +49,7 @@ final class validationTest extends TestCase
 		$doc = getTestDocument();
 		$doc->city( 'Springfield', 'IL' );
 
-		// required to trigger validation
-		$doc->jsonSerialize();
+		$doc->dovalidate();
 	}
 	//------------------------------------------------------------------------
 	public function testDoValidate()
@@ -62,7 +60,6 @@ final class validationTest extends TestCase
 		$doc = getTestDocument();
 		$doc->city( 'Springfield', 'IL' );
 
-		// should call validate and trigger the exception above
 		$doc->doValidate();
 	}
 	//------------------------------------------------------------------------
