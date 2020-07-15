@@ -53,7 +53,26 @@ For an example, look at the customer class located in the example section below.
 You can validate values coming into your document to conform to a list of allowed values.
 
 ## When to call markValueSet
-If you write a custom property setter as described above, you must make sure you call `->markValueSet( $name )` to ensure validation works.
+If you write a custom property setter as described above, you might need to call `->markValueSet( $name )` to ensure validation works.
+If you don't call the parent class and set the property directly, you will need to call `markValueSet( $name )`.
+If you call the parent class like this you will not need to.
+
+```php
+// choose one way to do this
+public function name( personName $name ) : self
+{
+	$this->name = $name;
+	$this->markValueSet( 'name' );
+	return $this;
+}
+
+// or 
+public function name( personName $name ) : self
+{
+	return parent::name( $name );
+}
+```
+
 See the examples at the bottom.
 
 ---
@@ -179,9 +198,7 @@ class customer extends \treehousetim\document\document
 	//------------------------------------------------------------------------
 	public function name( personName $name ) : self
 	{
-		$this->name = $name;
-		$this->markValueSet( 'name' );
-		return $this;
+		return parent::name( $name );
 	}
 }
 
