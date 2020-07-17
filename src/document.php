@@ -70,12 +70,32 @@ abstract class document implements \jsonSerializable
 		{
 			$this->validateRequired( $name );
 
-			if( ! $this->{$name} instanceOf document )
+			if( is_array( $this->{$name} ) )
 			{
-				throw new Exception( $name . ':: is not a sub document', Exception::wrongType );
+				$this->validateArrayOfSubDocuments( $name, $this->{$name} );
+			}
+			else
+			{
+				if( ! $this->{$name} instanceOf document )
+				{
+					throw new Exception( $name . ':: is not a sub document', Exception::wrongType );
+				}
+
+				$this->{$name}->validate();
+			}
+		}
+	}
+	//------------------------------------------------------------------------
+	protected function validateArrayOfSubDocuments( string $name, array $arr )
+	{
+		foreach( $arr as $sub )
+		{
+			if( ! $sub instanceOf document )
+			{
+				throw new Exception( $name . ':: array item is not a sub document', Exception::wrongType );
 			}
 
-			$this->{$name}->validate();
+			$sub->validate();
 		}
 	}
 	//------------------------------------------------------------------------
@@ -157,6 +177,13 @@ abstract class document implements \jsonSerializable
 			}
 			else
 			{
+				if( is_array( $this->{$name} ) && count( $this->{$name} ) && $this->{$name}[0] instanceOf document )
+				{
+					foreach( $this->{$name} as $subDocument )
+					{
+						$out[$name][] = $subDocument->jsonSerialize();
+					}
+				}
 				$out[$name] = $this->{$name};
 			}
 		}

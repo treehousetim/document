@@ -1,7 +1,7 @@
 ![Unit Tests](https://github.com/treehousetim/document/workflows/Unit%20Tests/badge.svg)
 
-# document
-A generic document class used to create structured data objects
+# treehousetim/document
+A generic document class used to create structured data objects.  One use for this is to create objects that conform to an API request or response.
 
 ## Installing
 
@@ -9,13 +9,22 @@ A generic document class used to create structured data objects
 
 ## Using
 After installing, create your own class that extends `treehousetim\document`.
-You must implement two methods.
+Add all your properties as protected and implement the abstract methods.
 
-`abstract public function jsonSerialize();`
+### Abstract Methods
+
+```php
+abstract public function jsonSerialize();
+```
 Return a structure that makes sense for your document.  This method is called automatically if you json_encode an instance of your class.
 
-`abstract protected function validate();`
-This is semantic - you should call ->validate() where it makes sense in your code.  You can see one approach in the examples at the bottom.
+```php
+abstract protected function validate()
+```
+
+This is semantic - you should call ->validate() where it makes sense in your code.
+It is suggested to always call `$this->validate();` at the top of your `jsonSerialize()` function.
+You can see one approach in the examples at the bottom.
 
 This method will be called on sub documents that are members of a document.
 
@@ -23,13 +32,18 @@ This method will be called on sub documents that are members of a document.
 After extending and creating a document class with properties, you can set values using chained function calls.
 
 ```php
-// create to be able to pass in
+// See class definitions at the bottom of this README
+
+// create a sub document and pass it to a function
 $name = (new personName())
 	->first( 'Easter' )
 	->last( 'Bunny' )
 	->full( 'The Easter Bunny' );
 
-// or create inline
+$customer = new (customer() )
+	->name( $name );
+
+// or create sub documents inline
 
 $customer = new (customer() )
 	->name( (new personName())
@@ -44,13 +58,74 @@ $customer = new (customer() )
 	->postal_code( '12345' );
 ```
 
-## Setting sub documents
-Always write a setter method to enforce the type of the sub document (if using PHP 7.4 or later, you can specify type on the class declaration).
+### Setting sub documents
+You should always write a setter method to enforce the type of the sub document (if using PHP 7.4 or later, you can specify type on the class declaration).
 
-For an example, look at the customer class located in the example section below.
+*see example at the bottom of this README*
 
-## Setting other values with validation
-You can validate values coming into your document to conform to a list of allowed values.
+### Setting and validating a value is in a list
+You can validate values coming into your document to conform to a list of allowed values by using `$this->validateValueInList`.
+
+```php
+class aDocument extends \treehousetim\document\document
+{
+	const adtHTML = 'html';
+	const adtTEXT = 'text';
+	const adtJSON = 'json';
+
+	protected $allowedTypes = [
+		self::adtHTML,
+		self::adtTEXT,
+		self::adtJSON
+	];
+
+	protected $type;
+
+	public function type( string $type ) : self
+	{
+		$this->validateValueInList( 'type', $type, $this->allowedTypes );
+		return parent::type( $type );
+	}
+	//------------------------------------------------------------------------
+	public function jsonSerialize()
+	{
+		$this->validate();
+		return $this->getFieldArray( 'type' );
+	}
+	//------------------------------------------------------------------------
+	protected function validate()
+	{
+		$this->validateRequired( 'type' );
+	}
+}
+```
+## Arrays of sub documents
+In order to support documents containing array lists of other documents, you can have properties/fields that are arrays.
+
+```php
+class arrayDocument extends \treehousetim\document\document
+{
+	protected $name = array();
+
+	public function jsonSerialize ()
+	{
+		$this->validate();
+		return $this->getFieldArray( 'name' );
+	}
+	//------------------------------------------------------------------------
+	public function name( nameDocument $nameDoc ) : self
+	{
+		$this->name[] = $nameDoc;
+		$this->markValueSet( 'name' );
+		return $this;
+	}
+	//------------------------------------------------------------------------
+	protected function validate()
+	{
+		$this->validateSubDocument( 'name' );
+	}
+}
+```
 
 ## When to call markValueSet
 If you write a custom property setter as described above, you might need to call `->markValueSet( $name )` to ensure validation works.
@@ -136,6 +211,8 @@ The code thrown is `Exception::disallowedValue`
 
 The suggestion is made to implement a setter function for any values you want to set using this validation function.  Before you set the value on the document class you would call this validation function.  This will protect your document object from ever having wrong values set on it.
 
+**Set Example Above**
+
 ### ->validateNotNull( string ...$names )
 Validates that a property exists and is not equal to null. `!== null`
 
@@ -143,6 +220,24 @@ The code thrown is `Exception::noSuchProperty` if property does not exist on cla
 
 The code thrown is `Exception::missingData` if the property === null.
 
+### Other validations
+You can and should perform any other validations that are necessary to protect the integrity of your document's data.
+The suggestion is to throw exceptions - it should be a validation of last resort, not end user validation with error messages.
+
+You can and should throw `\treehousetim\document\Exception` exceptions along with an appropriate exception code from this project's Exception class.
+
+```php
+class Exception extends \LogicException
+{
+	const undefined = -1;
+	const missingData = 1;
+	const wrongType = 2;
+	const callOneVar = 3;
+	const noSuchProperty = 4;
+	const disallowedValue = 5;
+	const noValue = 6;
+}
+```
 
 ## Testing the code base
 If you have cloned this repository, you can run the tests.
