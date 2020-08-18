@@ -22,13 +22,28 @@ abstract class document implements \jsonSerializable
 		return (object) $this->jsonSerialize();
 	}
 	//------------------------------------------------------------------------
+	public function fieldExists( $name ) : bool
+	{
+		return property_exists( get_class( $this ), $name );
+	}
+	//------------------------------------------------------------------------
+	public function fieldSet( $name ) : bool
+	{
+		return array_key_exists( $name, $this->_doc_set_values ) && $this->_doc_set_values[$name] != false;
+	}
+	//------------------------------------------------------------------------
+	public function fieldExistsAndIsSet( $name ) : bool
+	{
+		return $this->fieldExists( $name ) && $this->fieldSet( $name );
+	}
+	//------------------------------------------------------------------------
 	protected function validateRequired( string ...$names )
 	{
 		foreach( $names as $name )
 		{
-			if( ! array_key_exists( $name, $this->_doc_set_values ) || $this->_doc_set_values[$name] === false )
+			if( ! $this->fieldSet( $name ) )
 			{
-				if( ! property_exists( get_class( $this ), $name ) )
+				if( ! $this->fieldExists( $name ) )
 				{
 					throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
 				}
@@ -114,7 +129,7 @@ abstract class document implements \jsonSerializable
 			throw new Exception( 'When setting values on ' . get_class( $this ) . ' ('. $name . ') You must pass exactly one value' . print_r( $arguments, true ), Exception::callOneVar );
 		}
 
-		if( ! property_exists( get_class( $this ), $name ) )
+		if( ! $this->fieldExists( $name ) )
 		{
 			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
 		}
@@ -133,7 +148,7 @@ abstract class document implements \jsonSerializable
 	//------------------------------------------------------------------------
 	public function __get( $name )
 	{
-		if( ! property_exists( get_class( $this ), $name ) )
+		if( ! $this->fieldExists( $name ) )
 		{
 			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
 		}
@@ -143,7 +158,7 @@ abstract class document implements \jsonSerializable
 	//------------------------------------------------------------------------
 	public function __unset( $name )
 	{
-		if( ! property_exists( get_class( $this ), $name ) )
+		if( ! $this->fieldExists( $name ) )
 		{
 			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
 		}
@@ -160,13 +175,21 @@ abstract class document implements \jsonSerializable
 		}
 	}
 	//------------------------------------------------------------------------
+	protected function fieldOutIfSet( $name, array &$out )
+	{
+		if( $this->fieldSet( $name ) )
+		{
+			$out[$name] = $this->{$name};
+		}
+	}
+	//------------------------------------------------------------------------
 	protected function getFieldArray( string ...$fields ) : array
 	{
 		$out = array();
 
 		foreach( $fields as $name )
 		{
-			if( ! property_exists( get_class( $this ), $name ) )
+			if( ! $this->fieldExists( $name ) )
 			{
 				throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
 			}

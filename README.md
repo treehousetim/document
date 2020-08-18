@@ -325,3 +325,16 @@ class personName extends \treehousetim\document\document
 
 
 ```
+
+## Important API
+```php
+protected function optionalFieldOut( $fieldName, array &$out )
+protected function fieldOutIfSet( $name, array &$out )
+protected function getFieldArray( string ...$fields ) : array
+public function doValidate()
+public function dataArray() : array
+public function dataObject() : \stdClass
+public function fieldExists( $name ) : bool
+public function fieldSet( $name ) : bool
+public function fieldExistsAndIsSet( $name ) : bool
+```
