@@ -207,7 +207,10 @@ abstract class document implements \jsonSerializable
 						$out[$name][] = $subDocument->jsonSerialize();
 					}
 				}
-				$out[$name] = $this->{$name};
+				else
+				{
+					$out[$name] = $this->{$name};
+				}
 			}
 		}
 

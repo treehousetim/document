@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 final class arrayDocumentTest extends TestCase
 {
-	public function testJSONOutput()
+	protected function getDoc()
 	{
 		$doc = new arrayDocument();
 
@@ -33,6 +33,13 @@ final class arrayDocumentTest extends TestCase
 				->full_name( 'Jenny Jumper' )
 			);
 
+		return $doc;
+	}
+	//------------------------------------------------------------------------
+	public function testJSONOutput()
+	{
+		$doc = $this->getDoc();
+
 		$this->assertEquals(
 			'{"name":[{"full_name":"Robby the Robot","first_name":"Robby","last_name":"Robot"},{"full_name":"Shelia Supreme","first_name":"Shelia","last_name":"Supreme"},{"full_name":"Duran Duran","first_name":"Duran","last_name":"Duran"},{"full_name":"Jenny Jumper","first_name":"Jenny","last_name":"Jumper"}]}',
 			json_encode( $doc )
@@ -45,5 +52,13 @@ final class arrayDocumentTest extends TestCase
 
 		unset( $doc->name );
 		$doc->doValidate();
+	}
+	//------------------------------------------------------------------------
+	public function testGetFieldArray()
+	{
+		$doc = $this->getDoc();
+		$arr = $doc->jsonSerialize();
+		$this->assertTrue( is_array( $arr['name'][0] ), 'sub document is serialized' );
+		
 	}
 }
