@@ -27,6 +27,14 @@ abstract class document implements \jsonSerializable
 		return property_exists( get_class( $this ), $name );
 	}
 	//------------------------------------------------------------------------
+	protected function requireFieldExists( string $name )
+	{
+		if( ! $this->fieldExists( $name ) )
+		{
+			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
+		}
+	}
+	//------------------------------------------------------------------------
 	public function fieldSet( $name ) : bool
 	{
 		return array_key_exists( $name, $this->_doc_set_values ) && $this->_doc_set_values[$name] != false;
@@ -43,10 +51,7 @@ abstract class document implements \jsonSerializable
 		{
 			if( ! $this->fieldSet( $name ) )
 			{
-				if( ! $this->fieldExists( $name ) )
-				{
-					throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
-				}
+				$this->requireFieldExists( $name );
 
 				throw new Exception( $name . ':: has not been set', Exception::missingData );
 			}
@@ -126,13 +131,10 @@ abstract class document implements \jsonSerializable
 	{
 		if( count( $arguments ) != 1 )
 		{
-			throw new Exception( 'When setting values on ' . get_class( $this ) . ' ('. $name . ') You must pass exactly one value' . print_r( $arguments, true ), Exception::callOneVar );
+			throw new Exception( 'When setting values on ' . get_class( $this ) . ' ('. $name . ') You must pass exactly one value. Value passed:' . PHP_EOL . print_r( $arguments, true ), Exception::callOneVar );
 		}
 
-		if( ! $this->fieldExists( $name ) )
-		{
-			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
-		}
+		$this->requireFieldExists( $name );
 
 		$this->_doc_set_values[$name] = true;
 		$this->{$name} = $arguments[0];
@@ -148,20 +150,14 @@ abstract class document implements \jsonSerializable
 	//------------------------------------------------------------------------
 	public function __get( $name )
 	{
-		if( ! $this->fieldExists( $name ) )
-		{
-			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
-		}
+		$this->requireFieldExists( $name );
 
 		return $this->{$name};
 	}
 	//------------------------------------------------------------------------
 	public function __unset( $name )
 	{
-		if( ! $this->fieldExists( $name ) )
-		{
-			throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
-		}
+		$this->requireFieldExists( $name );
 
 		$this->_doc_set_values[$name] = false;
 		$this->{$name} = null;
@@ -183,16 +179,30 @@ abstract class document implements \jsonSerializable
 		}
 	}
 	//------------------------------------------------------------------------
+	public function setFromMappedArray( array $map, array $data )
+	{
+		foreach ( $map as $incoming => $classProp )
+		{
+			$this->requireFieldExists( $classProp );
+
+			if( ! array_key_exists( $incoming, $data ) )
+			{
+				throw new Exception( $incoming . ' does not exist in provided array', Exception::missingData );
+			}
+
+			$this->$classProp( $data[$incoming] );
+		}
+
+		return $this;
+	}
+	//------------------------------------------------------------------------
 	protected function getFieldArray( string ...$fields ) : array
 	{
 		$out = array();
 
 		foreach( $fields as $name )
 		{
-			if( ! $this->fieldExists( $name ) )
-			{
-				throw new Exception( $name . ' does not exist on ' . get_class( $this ), Exception::noSuchProperty );
-			}
+			$this->requireFieldExists( $name );
 
 			if( $this->{$name} instanceOf document )
 			{

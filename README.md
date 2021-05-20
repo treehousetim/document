@@ -11,6 +11,17 @@ A generic document class used to create structured data objects.  One use for th
 After installing, create your own class that extends `treehousetim\document`.
 Add all your properties as protected and implement the abstract methods.
 
+### Remapping GET or POST arrays into a document class
+Many times you want to be able to remap internal field names to hide implementation details. the document class provides a way to set values from an array that has different field names from your document.
+
+```php
+public function setFromMappedArray( array $map, array $data )
+```
+
+Pass in a map array in the format `['incomingDataArrayKey' => 'documentClassFieldName']`
+
+*see example at the bottom of this README*
+
 ### Abstract Methods
 
 ```php
@@ -323,8 +334,25 @@ class personName extends \treehousetim\document\document
 	}
 }
 
+```
+
+### Example of remapping
+
+```php
+<?PHP
+
+$map = ['fullName' => 'full_name', 'firstName' => 'first_name', 'lastName' => 'last_name'];
+
+// could be from POST or API incoming parsed JSON
+$data = ['fullName' => 'Robot Droid', 'firstName' => 'Robot', 'lastName' => 'Droid'];
+
+// nameDocument from this project's unit tests
+$doc = new \treehousetim\document\test\nameDocument();
+$doc->mapArray( $map, $data );
+// $doc now has the proper values set from the data array
 
 ```
+
 
 ## Important API
 ```php
