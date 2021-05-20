@@ -5,7 +5,7 @@ use treehousetim\document\Exception as documentException;
 
 use PHPUnit\Framework\TestCase;
 
-final class existsSetFunction extends TestCase
+final class existsSetFunctionTest extends TestCase
 {
 	public function testExists()
 	{

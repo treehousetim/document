@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.3/phpunit.xsd"
+	xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+	executionOrder="random"
 	bootstrap="./tests/bootstrap.php"
 	colors="true"
 	convertErrorsToExceptions="true"
@@ -9,7 +10,12 @@
 	convertWarningsToExceptions="true"
 	processIsolation="false"
 	stopOnFailure="false"
-	syntaxCheck="true">
+	failOnWarning="true"
+	failOnRisky="true"
+	failOnEmptyTestSuite="true"
+	beStrictAboutOutputDuringTests="true"
+	verbose= "true"
+	>
 <testsuites>
 	<testsuite name="Test Suite">
 		<directory suffix="Test.php">./tests/</directory>
