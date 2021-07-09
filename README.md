@@ -348,7 +348,7 @@ $data = ['fullName' => 'Robot Droid', 'firstName' => 'Robot', 'lastName' => 'Dro
 
 // nameDocument from this project's unit tests
 $doc = new \treehousetim\document\test\nameDocument();
-$doc->mapArray( $map, $data );
+$doc->setFromMappedArray( $map, $data );
 // $doc now has the proper values set from the data array
 
 ```
