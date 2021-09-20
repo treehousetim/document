@@ -210,7 +210,7 @@ abstract class document implements \jsonSerializable
 			}
 			else
 			{
-				if( is_array( $this->{$name} ) )
+				if( is_array( $this->{$name} ) && $this->{$name} )
 				{
 					foreach( $this->{$name} as $subDocument )
 					{
