@@ -210,11 +210,18 @@ abstract class document implements \jsonSerializable
 			}
 			else
 			{
-				if( is_array( $this->{$name} ) && count( $this->{$name} ) && $this->{$name}[0] instanceOf document )
+				if( is_array( $this->{$name} ) && $this->{$name} )
 				{
 					foreach( $this->{$name} as $subDocument )
 					{
-						$out[$name][] = $subDocument->jsonSerialize();
+						if( $subDocument instanceOf document )
+						{
+							$out[$name][] = $subDocument->jsonSerialize();
+						}
+						else
+						{
+							$out[$name] = $this->{$name};
+						}
 					}
 				}
 				else
