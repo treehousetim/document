@@ -1,7 +1,7 @@
 {
     "name": "treehousetim/document",
     "description": "A simple, zero-dependency structured object document",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
