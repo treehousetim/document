@@ -118,6 +118,60 @@ abstract class document implements \jsonSerializable
 			$sub->validate();
 		}
 	}
+		//------------------------------------------------------------------------
+	protected function validateInteger( ...$names ) : self
+	{
+		foreach( $names as $name )
+		{
+			// only valid if the value is the same as intval
+			// and then if it is, we test to make sure it's not an empty string (would evaluate to zero)
+			// and then we test to make sure it's not a bool
+
+			$valid = is_int( $this->{$name} ) ||
+			( is_string( $this->{$name} ) && trim( $this->{$name} ) !== '' &&
+				$this->{$name} == intval( $this->{$name} ) ) &&
+			( is_bool( $this->{$name} ) == false );
+
+			if( ! $valid )
+			{
+				throw new Exception( $name . ':: Disallowed Value (' . print_r( $this->{$name}, true ) . ') (not an integer) on ' . get_class( $this ), Exception::disallowedValue );
+			}
+		}
+
+		return $this;
+	}
+	//------------------------------------------------------------------------
+	protected function validateAlpha( ...$names ) : self
+	{
+		foreach( $names as $name )
+		{
+			// only valid if the value is the same as intval
+			// and then if it is, we test to make sure it's not an empty string (would evaluate to zero)
+			// and then we test to make sure it's not a bool
+
+			if( ! preg_match( '/^[a-z\s]?$/i', $this->{$name} ) )
+			{
+				throw new Exception( $name . ':: Disallowed Value (' . print_r( $this->{$name}, true ) . ') (not alpha) on ' . get_class( $this ), Exception::disallowedValue );
+			}
+		}
+		return $this;
+	}
+	//------------------------------------------------------------------------
+	protected function validateAlphaNumeric( ...$names ) : self
+	{
+		foreach( $names as $name )
+		{
+			// only valid if the value is the same as intval
+			// and then if it is, we test to make sure it's not an empty string (would evaluate to zero)
+			// and then we test to make sure it's not a bool
+
+			if( ! preg_match( '/^[0-9a-z\s]?$/i', $this->{$name} ) )
+			{
+				throw new Exception( $name . ':: Disallowed Value (' . print_r( $this->{$name}, true ) . ') (not alphanumeric) on ' . get_class( $this ), Exception::disallowedValue );
+			}
+		}
+		return $this;
+	}
 	//------------------------------------------------------------------------
 	protected function validateValueInList( string $name, string $value, array $list )
 	{
