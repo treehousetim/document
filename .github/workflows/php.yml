@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        operating-system: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        operating-system: ['ubuntu-latest']
         php-versions: ['7.0', '7.3', '8.0']
         phpunit-versions: ['latest']
     runs-on: ${{ matrix.operating-system }}
