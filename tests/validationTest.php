@@ -129,4 +129,88 @@ final class validationTest extends TestCase
 
 		$doc->doValidate();
 	}
+	//------------------------------------------------------------------------
+	public function testIntValidation()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::disallowedValue );
+
+		$doc = new intDocument();
+		$doc->a_number( '1.1' );
+		$doc->doValidate();
+	}
+	//------------------------------------------------------------------------
+	public function testIntValidationSpace()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::disallowedValue );
+
+		$doc = new intDocument();
+		$doc->a_number( '' );
+		$doc->doValidate();
+	}
+	//------------------------------------------------------------------------
+	public function testIntValidationFalse()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::disallowedValue );
+
+		$doc = new intDocument();
+		$doc->a_number( false );
+		$doc->doValidate();
+	}
+	//------------------------------------------------------------------------
+	public function testIntValidationNoException()
+	{
+		$doc = new intDocument();
+		$doc->a_number( '1' );
+		$doc->doValidate();
+		$this->assertEquals( 1, $doc->a_number );
+
+		$doc->a_number( 1 );
+		$doc->doValidate();
+		$this->assertEquals( 1, $doc->a_number );
+	}
+	//------------------------------------------------------------------------
+	public function testAlphaException()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::disallowedValue );
+
+		$doc = new alphaDocument();
+		$doc->alpha( 'abc123' );
+		$doc->alphaNum( 'abc123' );
+		$doc->doValidate();
+	}
+	//------------------------------------------------------------------------
+	public function testAlphaNumbersPresentException()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::disallowedValue );
+
+		$doc = new alphaDocument();
+		$doc->alpha( '123' );
+		$doc->alphaNum( 'abc123' );
+		$doc->doValidate();
+	}
+	//------------------------------------------------------------------------
+	public function testAlphaNumUnderscoreException()
+	{
+		$this->expectException( documentException::class );
+		$this->expectExceptionCode( documentException::disallowedValue );
+
+		$doc = new alphaDocument();
+		$doc->alpha( 'abc' );
+		$doc->alphaNum( '__abc123' );
+		$doc->doValidate();
+	}
+	//------------------------------------------------------------------------
+	public function testAlphaNumEmptyNoException()
+	{
+		$doc = new alphaDocument();
+		$doc->alpha( '' );
+		$doc->alphaNum( '' );
+		$doc->doValidate();
+		$this->assertEquals( '', $doc->alpha );
+	}
 }
