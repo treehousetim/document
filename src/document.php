@@ -145,10 +145,6 @@ abstract class document implements \jsonSerializable
 	{
 		foreach( $names as $name )
 		{
-			// only valid if the value is the same as intval
-			// and then if it is, we test to make sure it's not an empty string (would evaluate to zero)
-			// and then we test to make sure it's not a bool
-
 			if( ! preg_match( '/^[a-z\s]?$/i', $this->{$name} ) )
 			{
 				throw new Exception( $name . ':: Disallowed Value (' . print_r( $this->{$name}, true ) . ') (not alpha) on ' . get_class( $this ), Exception::disallowedValue );
@@ -161,10 +157,6 @@ abstract class document implements \jsonSerializable
 	{
 		foreach( $names as $name )
 		{
-			// only valid if the value is the same as intval
-			// and then if it is, we test to make sure it's not an empty string (would evaluate to zero)
-			// and then we test to make sure it's not a bool
-
 			if( ! preg_match( '/^[0-9a-z\s]?$/i', $this->{$name} ) )
 			{
 				throw new Exception( $name . ':: Disallowed Value (' . print_r( $this->{$name}, true ) . ') (not alphanumeric) on ' . get_class( $this ), Exception::disallowedValue );
