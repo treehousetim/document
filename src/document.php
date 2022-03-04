@@ -279,4 +279,52 @@ abstract class document implements \jsonSerializable
 
 		return $out;
 	}
+	//------------------------------------------------------------------------
+	public function asClassWithProps( string $className, $map = array() ) : object
+	{
+		$this->validate();
+		$out = new $className();
+		$props = $this->dataArray();
+		// slight optimization - do one if outside the loop
+		if( ! $map )
+		{
+			foreach( $props as $name => $value )
+			{
+				$out->$name = $value;
+			}
+		}
+		else
+		{
+			foreach( $map as $localVar => $objVar )
+			{
+				$out->{$objVar} = $props[$localVar];
+			}
+		}
+
+		return $out;
+	}
+	//------------------------------------------------------------------------
+	public function asClassWithFuncs( string $className, $map = array() ) : object
+	{
+		$this->validate();
+		$out = new $className();
+		$props = $this->dataArray();
+		// slight optimization - do one if outside the loop
+		if( ! $map )
+		{
+			foreach( $props as $name => $value )
+			{
+				$out->$name( $value );
+			}
+		}
+		else
+		{
+			foreach( $map as $localVar => $objVar )
+			{
+				$out->$objVar( $props[$localVar] );
+			}
+		}
+
+		return $out;
+	}
 }

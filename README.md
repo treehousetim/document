@@ -172,6 +172,16 @@ This will return the result of `->jsonSerialize()` cast as an array.
 ### ->dataObject()
 This will return the result of `->jsonSerialize()` cast as an object.  This will be a stdClass.
 
+### ->asClassWithProps( string $className, array $optionalMap = array() )
+ This will return a new object instance for the given `$className`.  This object will be created using property calls to set values.
+
+ Pass the optional map in the format of `['document_field'=>'object_field', ...]`
+
+### ->asClassWithFuncs( string $className, array $optionalMap = array() )
+ This will return a new object instance for the given `$className`.  This object will be created using function calls using the form: `->prop_name( $value )`
+ 
+ Pass the optional map in the format of `['document_field'=>'object_field', ...]`
+
 ### Note
 *`dataArray` and `dataObject` will both be shallow arrays/objects - it only affects the return type of the immediate document, these do not descend into sub documents.*
 
@@ -352,7 +362,83 @@ $doc->setFromMappedArray( $map, $data );
 // $doc now has the proper values set from the data array
 
 ```
+---
 
+### Example of ->asClassWithProps
+#### `App/Models/Names.php`
+
+```php
+<?php namespace App\Models;
+
+class Names
+{
+	public $full_name;
+	public $first_name;
+	public $last_name;
+	public $suffix;
+}
+```
+
+#### `App/Documents/Names.php`
+
+```php
+<?PHP
+use App\Models\Names as NameModel;
+use App\Documents\Name as NameDocument;
+
+$nameDoc = (new NameDocument())
+	->first_name( 'Robby' )
+	->last_name( 'Robot' )
+	->full_name( 'Robby the Robot' );
+
+$model = $nameDoc->asClassWithProps( NameModel::class );
+
+echo $model->first_name; // outputs Robby
+```
+---
+
+### Example of ->asClassWithFuncs
+
+#### `App/Models/Names.php`
+
+```php
+<?php namespace App\Models;
+
+class Names
+{
+	protected $full_name;
+	protected $first_name;
+	protected $last_name;
+	protected $suffix;
+
+	public function __call( $name, $args )
+	{
+		$this->${name} = $args[0];
+	}
+	//------------------------------------------------------------------------
+	public function get_first_name() : string
+	{
+		return $this->first_name;
+	}
+}
+```
+
+#### `App/Documents/Names.php`
+
+```php
+<?PHP
+use App\Models\Names as NameModel;
+use App\Documents\Name as NameDocument;
+
+$nameDoc = (new NameDocument())
+	->first_name( 'Robby' )
+	->last_name( 'Robot' )
+	->full_name( 'Robby the Robot' );
+
+$model = $nameDoc->asClassWithFuncs( NameModel::class );
+
+ $model->get_first_name(); // outputs Robby
+```
 
 ## Important API
 ```php
@@ -365,4 +451,6 @@ public function dataObject() : \stdClass
 public function fieldExists( $name ) : bool
 public function fieldSet( $name ) : bool
 public function fieldExistsAndIsSet( $name ) : bool
+public function asClassWithProps( string $className, $map = array() ) : object
+public function asClassWithFuncs( string $className, $map = array() ) : object
 ```
