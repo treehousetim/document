@@ -145,7 +145,7 @@ abstract class document implements \jsonSerializable
 	{
 		foreach( $names as $name )
 		{
-			if( ! preg_match( '/^[a-z\s]?$/i', $this->{$name} ) )
+			if( ! preg_match( '/^[a-z\s]*$/i', $this->{$name} ) )
 			{
 				throw new Exception( $name . ':: Disallowed Value (' . print_r( $this->{$name}, true ) . ') (not alpha) on ' . get_class( $this ), Exception::disallowedValue );
 			}
@@ -157,7 +157,7 @@ abstract class document implements \jsonSerializable
 	{
 		foreach( $names as $name )
 		{
-			if( ! preg_match( '/^[0-9a-z\s]?$/i', $this->{$name} ) )
+			if( ! preg_match( '/^[0-9a-z\s]*$/i', $this->{$name} ) )
 			{
 				throw new Exception( $name . ':: Disallowed Value (' . print_r( $this->{$name}, true ) . ') (not alphanumeric) on ' . get_class( $this ), Exception::disallowedValue );
 			}
