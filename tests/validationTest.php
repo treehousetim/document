@@ -172,14 +172,13 @@ final class validationTest extends TestCase
 		$this->assertEquals( 1, $doc->a_number );
 	}
 	//------------------------------------------------------------------------
-	public function testAlphaException()
+	public function testAlphaNumbersException()
 	{
 		$this->expectException( documentException::class );
 		$this->expectExceptionCode( documentException::disallowedValue );
 
 		$doc = new alphaDocument();
 		$doc->alpha( 'abc123' );
-		$doc->alphaNum( 'abc123' );
 		$doc->doValidate();
 	}
 	//------------------------------------------------------------------------
@@ -190,7 +189,6 @@ final class validationTest extends TestCase
 
 		$doc = new alphaDocument();
 		$doc->alpha( '123' );
-		$doc->alphaNum( 'abc123' );
 		$doc->doValidate();
 	}
 	//------------------------------------------------------------------------
@@ -200,7 +198,7 @@ final class validationTest extends TestCase
 		$this->expectExceptionCode( documentException::disallowedValue );
 
 		$doc = new alphaDocument();
-		$doc->alpha( 'abc' );
+		$doc->alpha( 'abc_f' );
 		$doc->alphaNum( '__abc123' );
 		$doc->doValidate();
 	}
@@ -212,5 +210,15 @@ final class validationTest extends TestCase
 		$doc->alphaNum( '' );
 		$doc->doValidate();
 		$this->assertEquals( '', $doc->alpha );
+	}
+	//------------------------------------------------------------------------
+	public function testAlphaNumbersValidDataNoException()
+	{
+		$doc = new alphaDocument();
+		$doc->alpha( 'asv' );
+		$doc->alphaNum( 'abc123' );
+		$doc->doValidate();
+		$this->assertEquals( 'abc123', $doc->alphaNum );
+		$this->assertEquals( 'asv', $doc->alpha );
 	}
 }
