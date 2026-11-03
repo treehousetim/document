@@ -4,6 +4,7 @@ abstract class document implements \jsonSerializable
 {
 	private $_doc_set_values = [];
 
+	#[\ReturnTypeWillChange]
 	abstract public function jsonSerialize ();
 	abstract protected function validate();
 	//------------------------------------------------------------------------
